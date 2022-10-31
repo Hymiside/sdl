@@ -1,11 +1,10 @@
-create table users (
+create table schools (
     id text primary key,
-    firstname text,
-    lastname text,
-    username text unique,
+    name text unique,
+    phone_number text,
     email text,
     password_hash text
 );
 
-create index on users(id);
-create index on users(username);
+create index on schools(id);
+create index on schools(name);

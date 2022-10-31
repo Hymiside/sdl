@@ -8,7 +8,7 @@ import (
 
 type Authorization interface {
 	CreateSchool(user models.School) (string, error)
-	GetSchool(username, password string) (models.School, error)
+	GetSchool(email string) (models.School, error)
 }
 
 type Repository struct {

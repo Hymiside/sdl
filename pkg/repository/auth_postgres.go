@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/Hymiside/stubent-media-backend/pkg/models"
 	"log"
 	"time"
+
+	"github.com/Hymiside/stubent-media-backend/pkg/models"
 )
 
 type AuthPostgres struct {
@@ -22,7 +23,7 @@ func (r *AuthPostgres) CreateSchool(school models.School) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
-	stmt, err := r.db.Prepare("insert into users(id, firstname, lastname, username, email, password_hash) values ($1, $2, $3, $4, $5, $6) returning id")
+	stmt, err := r.db.Prepare("insert into schools(id, name, phone_number, email, password_hash) values ($1, $2, $3, $4, $5) returning id")
 	if err != nil {
 		return "", fmt.Errorf("error to prepare sql request: %v", err)
 	}
@@ -46,7 +47,20 @@ func (r *AuthPostgres) CreateSchool(school models.School) (string, error) {
 	return schoolId, nil
 }
 
-func (r *AuthPostgres) GetSchool(username, password string) (models.School, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *AuthPostgres) GetSchool(email string) (models.School, error) {
+	var school models.School
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	request := fmt.Sprintf("select id, password_hash from schools where email = $1")
+	row := r.db.QueryRowContext(ctx, request, email)
+	if row.Err() != nil {
+		return models.School{}, fmt.Errorf("error to get schoolId and passwordHash: %v", row.Err())
+	}
+	if err := row.Scan(&school.Id, &school.Password); err != nil {
+		return models.School{}, fmt.Errorf("error to parse schoolId and passwordHash: %v", err)
+	}
+
+	return school, nil
 }

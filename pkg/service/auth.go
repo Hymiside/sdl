@@ -2,10 +2,18 @@ package service
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/Hymiside/stubent-media-backend/pkg/models"
 	"github.com/Hymiside/stubent-media-backend/pkg/repository"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	signingKey = []byte("qrkjk#4#%35FSFJlja#4353KSFjH")
+	tokenTTL   = 24 * time.Hour
 )
 
 type AuthService struct {
@@ -16,27 +24,44 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user models.School) (string, error) {
-	var userId string
+func (s *AuthService) CreateSchool(school models.School) (string, error) {
+	var schoolId string
 
-	user.Id = uuid.New().String()
-	hash, err := hashPassword(user.Password)
+	school.Id = uuid.New().String()
+	hash, err := hashPassword(school.Password)
 	if err != nil {
 		return "", fmt.Errorf("error to hashing password")
 	}
-	user.Password = hash
+	school.Password = hash
 
-	userId, err = s.repo.CreateSchool(user)
+	schoolId, err = s.repo.CreateSchool(school)
 	if err != nil {
 		return "", err
 	}
 
-	return userId, nil
+	return schoolId, nil
 }
 
-func (s *AuthService) GenerateToken(username, password string) (string, error) {
-	//TODO implement me
-	panic("implement me")
+func (s *AuthService) GenerateToken(email, password string) (string, error) {
+	school, err := s.repo.GetSchool(email)
+	if err != nil {
+		return "", err
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(school.Password), []byte(password)); err != nil {
+		return "", fmt.Errorf("invalid password: %v", err)
+	}
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["ExpiresAt"] = time.Now().Add(10 * time.Second)
+	claims["SchoolId"] = school.Id
+
+	tokenString, err := token.SignedString(signingKey)
+	if err != nil {
+		return "", fmt.Errorf("error to create jwt-token: %v", err)
+	}
+	return tokenString, nil
 }
 
 func (s *AuthService) ParseToken(token string) (int, error) {

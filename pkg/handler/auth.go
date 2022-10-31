@@ -17,7 +17,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		responseWithError(c, http.StatusBadRequest, "error invalid request")
 		return
 	}
-	userId, err := h.services.CreateUser(data)
+	userId, err := h.services.CreateSchool(data)
 	if err != nil {
 		responseWithError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -27,6 +27,21 @@ func (h *Handler) signUp(c *gin.Context) {
 }
 
 func (h *Handler) signIn(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	var data models.School
+
+	if err := c.BindJSON(&data); err != nil {
+		responseWithError(c, http.StatusBadRequest, "error to parse json")
+		return
+	}
+	if data.Email == "" || data.Password == "" {
+		responseWithError(c, http.StatusBadRequest, "error invalid request")
+		return
+	}
+	token, err := h.services.GenerateToken(data.Email, data.Password)
+	if err != nil {
+		responseWithError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responseSuccessful(c, map[string]string{"token": token})
 }
