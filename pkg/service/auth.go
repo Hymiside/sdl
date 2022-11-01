@@ -47,7 +47,6 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	if err = bcrypt.CompareHashAndPassword([]byte(school.Password), []byte(password)); err != nil {
 		return "", fmt.Errorf("invalid password: %v", err)
 	}
