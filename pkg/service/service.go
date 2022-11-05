@@ -12,7 +12,7 @@ type Service struct {
 type Authorization interface {
 	CreateSchool(school models.School) (string, error)
 	GenerateToken(email, password string) (string, error)
-	ParseToken(token string) (int, error)
+	ParseToken(token string) (string, error)
 }
 
 func NewService(repos *repository.Repository) *Service {
