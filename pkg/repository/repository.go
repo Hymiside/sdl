@@ -7,16 +7,25 @@ import (
 )
 
 type Authorization interface {
-	CreateSchool(user models.School) (string, error)
+	CreateSchool(school models.School) (string, error)
 	GetSchool(email string) (models.School, error)
+}
+
+type Library interface {
+	CreateClass(class models.Class) (int, error)
+	CreateStudent(student models.Student) (int, error)
+
+	// TODO
 }
 
 type Repository struct {
 	Authorization
+	Library
 }
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
+		Library:       NewLibPostgres(db),
 	}
 }
