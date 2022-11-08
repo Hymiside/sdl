@@ -19,6 +19,7 @@ type Authorization interface {
 type Library interface {
 	CreateClass(class models.Class) (int, error)
 	CreateStudent(student models.Student) (int, error)
+	GetAllClasses(schoolId string) ([]models.Class, error)
 
 	// TODO
 }

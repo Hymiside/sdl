@@ -14,7 +14,7 @@ import (
 
 var (
 	signingKey = []byte("qrkjk#4#%35FSFJlja#4353KSFjH")
-	tokenTTL   = 24 * time.Hour
+	tokenTTL   = 12 * time.Hour
 )
 
 type Claims struct {

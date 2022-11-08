@@ -22,6 +22,17 @@ func (l *LibService) CreateClass(class models.Class) (int, error) {
 }
 
 func (l *LibService) CreateStudent(student models.Student) (int, error) {
-	//TODO implement me
-	panic("implement me")
+	studentId, err := l.repo.CreateStudent(student)
+	if err != nil {
+		return 0, err
+	}
+	return studentId, nil
+}
+
+func (l *LibService) GetAllClasses(schoolId string) ([]models.Class, error) {
+	classes, err := l.repo.GetAllClasses(schoolId)
+	if err != nil {
+		return nil, err
+	}
+	return classes, nil
 }

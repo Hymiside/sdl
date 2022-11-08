@@ -25,6 +25,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	api := router.Group("/api", h.schoolIdentity)
 	{
 		api.POST("/create-class", h.createClass)
+		api.POST("/create-student", h.createStudent)
+
+		api.GET("/get-classes", h.getAllClasses)
 	}
 
 	return router

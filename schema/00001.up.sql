@@ -29,4 +29,4 @@ create table students (
 create index on schools(id);
 create index on schools(email);
 
-create unique index on classes (school_id, number, letter)
+create unique index on classes (school_id, number, letter);
