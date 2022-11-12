@@ -7,7 +7,7 @@ import (
 
 type Service struct {
 	Authorization
-	Library
+	StudNCls
 }
 
 type Authorization interface {
@@ -16,11 +16,12 @@ type Authorization interface {
 	ParseToken(token string) (string, error)
 }
 
-type Library interface {
+type StudNCls interface {
 	CreateClass(class models.Class) (int, error)
 	CreateStudent(student models.Student) (int, error)
 	GetAllClasses(schoolId string) ([]models.Class, error)
 	GetAllStudents(schoolId string) ([]models.Student, error)
+	DeleteStudent(email string) error
 
 	// TODO
 }
@@ -28,6 +29,6 @@ type Library interface {
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
-		Library:       NewLibService(repos.Library),
+		StudNCls:      NewStudNClsService(repos.StudNCls),
 	}
 }

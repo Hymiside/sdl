@@ -11,23 +11,24 @@ type Authorization interface {
 	GetSchool(email string) (models.School, error)
 }
 
-type Library interface {
+type StudNCls interface {
 	CreateClass(class models.Class) (int, error)
 	CreateStudent(student models.Student) (int, error)
 	GetAllClasses(schoolId string) ([]models.Class, error)
 	GetAllStudents(schoolId string) ([]models.Student, error)
+	DeleteStudent(email string) error
 
 	// TODO
 }
 
 type Repository struct {
 	Authorization
-	Library
+	StudNCls
 }
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
-		Library:       NewLibPostgres(db),
+		StudNCls:      NewStudNClsPostgres(db),
 	}
 }
