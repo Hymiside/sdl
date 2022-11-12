@@ -84,3 +84,27 @@ func (l *LibPostgres) GetAllClasses(schoolId string) ([]models.Class, error) {
 	}
 	return classes, nil
 }
+
+func (l *LibPostgres) GetAllStudents(schoolId string) ([]models.Student, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	request := fmt.Sprintf("select students.first_name, students.last_name, students.middle_name, classes.letter, classes.number, students.email, students.phone_number from students join classes on classes.id = students.class_id and students.school_id = $1")
+	rows, err := l.db.QueryContext(ctx, request, schoolId)
+	if err != nil {
+		return nil, fmt.Errorf("error to get all students: %v", err)
+	}
+
+	var students []models.Student
+	for rows.Next() {
+		var student models.Student
+		if err = rows.Scan(&student.FirstName, &student.LastName, &student.MiddleName, &student.ClassLet, &student.ClassNum, &student.Email, &student.PhoneNumber); err != nil {
+			return nil, fmt.Errorf("error to scan students: %v", err)
+		}
+		students = append(students, student)
+	}
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows error to get classes")
+	}
+	return students, nil
+}

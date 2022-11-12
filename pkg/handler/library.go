@@ -73,3 +73,18 @@ func (h *Handler) getAllClasses(c *gin.Context) {
 	}
 	responseSuccessful(c, classes)
 }
+
+func (h *Handler) getAllStudents(c *gin.Context) {
+	schoolId, err := getSchoolId(c)
+	if err != nil {
+		responseWithError(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	students, err := h.services.GetAllStudents(schoolId)
+	if err != nil {
+		responseWithError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	responseSuccessful(c, students)
+}

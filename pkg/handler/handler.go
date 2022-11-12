@@ -28,6 +28,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		api.POST("/create-student", h.createStudent)
 
 		api.GET("/get-classes", h.getAllClasses)
+		api.GET("/get-students", h.getAllStudents)
 	}
 
 	return router

@@ -36,3 +36,11 @@ func (l *LibService) GetAllClasses(schoolId string) ([]models.Class, error) {
 	}
 	return classes, nil
 }
+
+func (l *LibService) GetAllStudents(schoolId string) ([]models.Student, error) {
+	students, err := l.repo.GetAllStudents(schoolId)
+	if err != nil {
+		return nil, err
+	}
+	return students, nil
+}
