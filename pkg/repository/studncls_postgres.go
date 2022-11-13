@@ -111,6 +111,19 @@ func (s *StudNClsPostgres) GetAllStudents(schoolId string) ([]models.Student, er
 
 // DeleteStudent здесь будет реализация с транзакцией, но надо ли это вообще???
 func (s *StudNClsPostgres) DeleteStudent(email string) error {
-	//TODO implement me
-	panic("implement me")
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("error to begin transaction: %v", err)
+	}
+
+	request := fmt.Sprintf("delete from students where email = $1")
+	_, err = tx.ExecContext(ctx, request, email)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error to delete student: %v", err)
+	}
+	return nil
 }
